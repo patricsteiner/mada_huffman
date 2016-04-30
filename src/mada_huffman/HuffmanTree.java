@@ -1,42 +1,89 @@
 package mada_huffman;
 
-import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
 
 public class HuffmanTree {
     
     Node root;
     
-    class Node {
+    public HuffmanTree(int[] frequencies) {
+    	buildTree(frequencies);
+    }
+    
+    private void buildTree(int[] frequencies) {
+    	PriorityQueue<Pair> queue = new PriorityQueue<Pair>((a, b) -> a.count > b.count ? 1 : -1);
+        for (int i = 0; i < frequencies.length; i++) {
+            if (frequencies[i] > 0) queue.add(new Pair(String.valueOf((char)i), frequencies[i]));
+        }
+        
+        while (queue.size() > 1) {
+            Pair elem1 = queue.poll();
+            Pair elem2 = queue.poll();
+            Node newRoot = new Node(null , elem1.symbol + elem2.symbol);
+            
+            if (root == null) {
+            	newRoot.child1 = new Node(newRoot, elem1.symbol);
+            	newRoot.child2 = new Node(newRoot, elem2.symbol);
+            }
+            else {
+            	newRoot.child1 = root;
+            	newRoot.child2 = new Node(newRoot, root.symbol.equals(elem1.symbol) ? elem2.symbol : elem1.symbol);
+            }
+            queue.add(new Pair(newRoot.symbol, elem1.count + elem2.count));
+            root = newRoot;
+        }
+    }
+    
+    public void print() {
+    	root.print();
+    }
+    
+    static class Node {
+    	
         String symbol;
         Node parent;
         Node child1;
         Node child2;
-        public Node(Node parent, String symbol) { this.parent = parent; this.symbol = symbol; }
-    }
-   
-    
-    public HuffmanTree(TreeMap<String, Integer> frequencies) {
-        buildTree(frequencies);
-     
-    }
-    
-    private void buildTree(TreeMap<String, Integer> frequencies) {  
-        if (frequencies.size() > 1) {
-            Entry<String, Integer> entry1 = frequencies.pollFirstEntry();
-            Entry<String, Integer> entry2 = frequencies.pollFirstEntry();
-            Node prevRoot = root;
-            root = new Node(null , entry1.getKey() + entry2.getKey());
-            if (root.symbol.length() > 2) {
-                root.child1 = prevRoot;
-            }
-            root.child1 = prevRoot;//;new Node(root, entry1.getKey());
-            root.child2 = new Node(root, entry2.getKey());
-            frequencies.put(root.symbol, entry1.getValue() + entry2.getValue());
-            
         
+        public Node(Node parent, String symbol) { 
+        	this.parent = parent; 
+        	this.symbol = symbol; 
         }
+        
+        @Override
+        public String toString() {
+        	if (child1 == null)
+        		return symbol + "(_,_)";
+        	return symbol + "(" + child1.symbol + "," + child2.symbol +")";
+        }
+        
+        public void print() {
+            print("");
+        }
+
+        private void print(String prefix) {
+            System.out.println(prefix + "|-- " + symbol);
+            if (child1 != null ) {
+            	child1.print(prefix + "   ");
+                child2.print(prefix + "   ");
+            }
+        }
+    }
+    
+    static class Pair {
+
+    	String symbol;
+    	int count;
+    	
+    	public Pair(String symbol, int count) {
+    		this.symbol = symbol;
+    		this.count = count;
+		}
+		
+		@Override
+		public String toString() {
+			return symbol + ": " + count;
+		}
     }
 }
 
