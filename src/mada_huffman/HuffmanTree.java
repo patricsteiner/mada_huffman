@@ -1,43 +1,73 @@
 package mada_huffman;
 
+import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HuffmanTree {
     
-    Node root;
+    private Node root;
+    private Set<Node> nodes = new HashSet<Node>();
+    
+    public Node getRoot()  { return root; }
+    public Set<Node> getNodes() { return nodes; }
     
     public HuffmanTree(int[] frequencies) {
     	buildTree(frequencies);
     }
     
     private void buildTree(int[] frequencies) {
-    	PriorityQueue<Pair> queue = new PriorityQueue<Pair>((a, b) -> a.count > b.count ? 1 : -1);
+    	PriorityQueue<Pair> queue = new PriorityQueue<Pair>((a, b) -> a.count - b.count);
         for (int i = 0; i < frequencies.length; i++) {
             if (frequencies[i] > 0) queue.add(new Pair(String.valueOf((char)i), frequencies[i]));
         }
         
+        Node parent = null;
         while (queue.size() > 1) {
             Pair elem1 = queue.poll();
             Pair elem2 = queue.poll();
-            Node newRoot = new Node(null , elem1.symbol + elem2.symbol);
+            parent = new Node(null , elem1.symbol + elem2.symbol);
             
-            if (root == null) {
-            	newRoot.child1 = new Node(newRoot, elem1.symbol);
-            	newRoot.child2 = new Node(newRoot, elem2.symbol);
+            if (!nodeExists(elem1.symbol)) {
+            	parent.child1 = new Node(parent, elem1.symbol);
+            	nodes.add(parent.child1);
             }
-            else {
-            	newRoot.child1 = root;
-            	newRoot.child2 = new Node(newRoot, root.symbol.equals(elem1.symbol) ? elem2.symbol : elem1.symbol);
+            else
+            	parent.child1 = (getNode(elem1.symbol).parent = parent);
+            
+            if (!nodeExists(elem2.symbol)) {
+            	parent.child2 = new Node(parent, elem2.symbol);
+            	nodes.add(parent.child2);
             }
-            queue.add(new Pair(newRoot.symbol, elem1.count + elem2.count));
-            root = newRoot;
+            else
+            	parent.child2 = (getNode(elem2.symbol).parent = parent);         	
+
+            nodes.add(parent);
+            queue.add(new Pair(parent.symbol, elem1.count + elem2.count));
         }
+        root = parent;
     }
-    
-    public void print() {
-    	root.print();
+	
+	private Node getNode(String symbol) {
+		try {
+			return nodes.stream().filter(n -> n.symbol.equals(symbol)).collect(Collectors.toList()).get(0);
+		} catch (Exception e) { return null; }
+	}
+	
+	private boolean nodeExists(String symbol) {
+		return getNode(symbol) != null;
+	}
+	
+	public Set<Node> getLeaves() {
+		return nodes.stream().filter(n -> n.child1 == null && n.child2 == null).collect(Collectors.toSet());
+	}
+
+	public String getCode(Node node) {
+		if (node.parent == null) return "";
+		return (node.parent.child1 == node ? "0" : "1") + getCode(node.parent);
     }
-    
+	
     static class Node {
     	
         String symbol;
@@ -55,18 +85,6 @@ public class HuffmanTree {
         	if (child1 == null)
         		return symbol + "(_,_)";
         	return symbol + "(" + child1.symbol + "," + child2.symbol +")";
-        }
-        
-        public void print() {
-            print("");
-        }
-
-        private void print(String prefix) {
-            System.out.println(prefix + "|-- " + symbol);
-            if (child1 != null ) {
-            	child1.print(prefix + "   ");
-                child2.print(prefix + "   ");
-            }
         }
     }
     
