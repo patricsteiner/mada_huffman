@@ -1,5 +1,6 @@
 package mada_huffman;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -10,7 +11,7 @@ public class HuffmanTree {
     private Node root;
     private Set<Node> nodes = new HashSet<Node>();
     
-    public Node getRoot()  { return root; }
+    public Node getRoot() { return root; }
     public Set<Node> getNodes() { return nodes; }
     
     public HuffmanTree(int[] frequencies) {
@@ -62,11 +63,14 @@ public class HuffmanTree {
 	public Set<Node> getLeaves() {
 		return nodes.stream().filter(n -> n.child1 == null && n.child2 == null).collect(Collectors.toSet());
 	}
-
-	public String getCode(Node node) {
-		if (node.parent == null) return "";
-		return (node.parent.child1 == node ? "0" : "1") + getCode(node.parent);
-    }
+	
+	public HashMap<String, String> createCodeMap() {
+         HashMap<String, String> codeMap = new HashMap<String, String>();
+         for (Node leaf : getLeaves()) {
+        	 codeMap.put(leaf.symbol, leaf.getCode());
+         }
+         return codeMap;
+     }
 	
     static class Node {
     	
@@ -80,10 +84,14 @@ public class HuffmanTree {
         	this.symbol = symbol; 
         }
         
+        public String getCode() {
+    		if (parent == null) return "";
+    		return parent.getCode() + (parent.child1 == this ? "0" : "1");
+        }
+        
         @Override
         public String toString() {
-        	if (child1 == null)
-        		return symbol + "(_,_)";
+        	if (child1 == null) return symbol + "(_,_)";
         	return symbol + "(" + child1.symbol + "," + child2.symbol +")";
         }
     }

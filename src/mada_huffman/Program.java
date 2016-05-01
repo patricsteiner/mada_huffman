@@ -4,8 +4,8 @@ public class Program {
 
     public static void main(String[] args) {
         
-        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency("asdfasdfaaaaaadddddddd"));
-        System.out.println(Huffman.createCodeMap(tree));
+        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency("helloowood"));
+        System.out.println(tree.createCodeMap());
         
         
     }
