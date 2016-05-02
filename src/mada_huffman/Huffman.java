@@ -12,8 +12,14 @@ public class Huffman {
          return frequencies;
      }
      
-     static String encode(String text) {
-    	 return null;
+     static String encode(HashMap<String, String> codeMap, String text) {
+    	 String res = "";
+    	 for (int i = 0; i < text.length(); i++)
+    		 res += codeMap.get(text.substring(i, i+1));
+    	 res += "1";
+    	 for (int i = 8 - res.length() % 8; i > 0; i--)
+    		 res += "0";
+    	 return res;
      }
      
      static String decode(HashMap<String, String> codeMap, String encoded) {

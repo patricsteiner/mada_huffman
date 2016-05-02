@@ -18,10 +18,13 @@ public class Program {
 
     public static void main(String[] args) throws IOException {
         
-        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency("ASas"));
+    	String in = readAsciiFile("text.txt");
+        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(in));
         System.out.println(tree.createCodeMap());
+        System.out.println(Huffman.encode(tree.createCodeMap(), in));
+        
         exportCodeMap(tree.createCodeMap(), "dec_tab.txt");
-        System.out.println(readAsciiFile("text.txt"));
+        
         
     }
     
