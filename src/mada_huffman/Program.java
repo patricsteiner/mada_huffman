@@ -3,6 +3,7 @@ package mada_huffman;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -21,9 +22,12 @@ public class Program {
     	String in = readAsciiFile("text.txt");
         HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(in));
         System.out.println(tree.createCodeMap());
-        System.out.println(Huffman.encode(tree.createCodeMap(), in));
         
+        System.out.println(Huffman.encode(tree.createCodeMap(), in));
         writeBytesToFile(Huffman.encode(tree.createCodeMap(), in).getBytes("ASCII"), "output.dat");
+        
+        String ins = readAsciiFile("output.dat");
+        System.out.println(ins);
         
         exportCodeMap(tree.createCodeMap(), "dec_tab.txt");
         
@@ -32,6 +36,15 @@ public class Program {
     
     static String readAsciiFile(String src) throws IOException {
     	return new String(Files.readAllBytes(Paths.get(src)), "ASCII");
+    }
+    
+    static byte[] readBytesFromFile(String src) throws IOException {
+    	File file = new File(src);
+    	byte[] bytes = new byte[(int) file.length()];
+    	FileInputStream fis = new FileInputStream(file);
+    	fis.read(bytes);
+    	fis.close();
+    	return bytes;
     }
     
     static void writeBytesToFile(byte[] bytes, String dest) throws IOException {
