@@ -23,6 +23,8 @@ public class Program {
         System.out.println(tree.createCodeMap());
         System.out.println(Huffman.encode(tree.createCodeMap(), in));
         
+        writeBytesToFile(Huffman.encode(tree.createCodeMap(), in).getBytes("ASCII"), "output.dat");
+        
         exportCodeMap(tree.createCodeMap(), "dec_tab.txt");
         
         
@@ -30,6 +32,12 @@ public class Program {
     
     static String readAsciiFile(String src) throws IOException {
     	return new String(Files.readAllBytes(Paths.get(src)), "ASCII");
+    }
+    
+    static void writeBytesToFile(byte[] bytes, String dest) throws IOException {
+    	FileOutputStream fos = new FileOutputStream(new File(dest));
+    	fos.write(bytes);
+    	fos.close();
     }
     
     static void exportCodeMap(HashMap<String, String> codeMap, String dest) throws IOException {
