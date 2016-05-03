@@ -7,26 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Program extends HuffmanGUI {
-
-    public static void main(String[] args) throws IOException {
-        
-    	String in = readAsciiFile("text.txt");
-        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(in));
-        System.out.println(new CodeTable(tree));
-        
-        System.out.println(Huffman.encode(new CodeTable(tree), in));
-        writeBytesToFile(Huffman.encode(new CodeTable(tree), in).getBytes("ASCII"), "output.dat");
-        
-        String ins = readAsciiFile("output.dat");
-        System.out.println(ins);
-        
-        writeToFile(new CodeTable(tree).toString(), "dec_tab.txt");
-        
-        
-    }
-    
-    static String readAsciiFile(String src) throws IOException {
+public class IOUtil {
+	
+	static String readAsciiFile(String src) throws IOException {
     	return new String(Files.readAllBytes(Paths.get(src)), "ASCII");
     }
     
