@@ -1,10 +1,67 @@
 package mada_huffman;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 public class Program {
 
-    public static void main(String[] args) {
-        for(int i : Huffman.getCharacterFrequency("Hallooo")) System.out.println(i);
-
+    public static void main(String[] args) throws IOException {
+        
+    	String in = readAsciiFile("text.txt");
+        HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(in));
+        System.out.println(tree.createCodeMap());
+        
+        System.out.println(Huffman.encode(tree.createCodeMap(), in));
+        writeBytesToFile(Huffman.encode(tree.createCodeMap(), in).getBytes("ASCII"), "output.dat");
+        
+        String ins = readAsciiFile("output.dat");
+        System.out.println(ins);
+        
+        exportCodeMap(tree.createCodeMap(), "dec_tab.txt");
+        
+        
     }
-
+    
+    static String readAsciiFile(String src) throws IOException {
+    	return new String(Files.readAllBytes(Paths.get(src)), "ASCII");
+    }
+    
+    static byte[] readBytesFromFile(String src) throws IOException {
+    	File file = new File(src);
+    	byte[] bytes = new byte[(int) file.length()];
+    	FileInputStream fis = new FileInputStream(file);
+    	fis.read(bytes);
+    	fis.close();
+    	return bytes;
+    }
+    
+    static void writeBytesToFile(byte[] bytes, String dest) throws IOException {
+    	FileOutputStream fos = new FileOutputStream(new File(dest));
+    	fos.write(bytes);
+    	fos.close();
+    }
+    
+    static void exportCodeMap(HashMap<String, String> codeMap, String dest) throws IOException {
+	    BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dest)));
+	    Iterator<Entry<String, String>> iterator = codeMap.entrySet().iterator();
+	    Entry<String, String> entry;
+    	while (iterator.hasNext()) {
+    		entry = iterator.next();
+			bw.write((int)entry.getKey().charAt(0) + ":" + entry.getValue());
+			if (iterator.hasNext()) bw.write("-");
+		}
+    	bw.close();
+    }
 }

@@ -1,14 +1,9 @@
 package mada_huffman;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 public class Huffman {
 
-    static HashSet<HuffmanTree> leafes;
      static int[] getCharacterFrequency(String asciistring) {
          int[] frequencies = new int[128];
          for (char c : asciistring.toCharArray()) {
@@ -17,29 +12,21 @@ public class Huffman {
          return frequencies;
      }
      
-     static int[] createCode(int[] frequencies) {
-         TreeMap<Character, Integer> tree = new TreeMap<Character, Integer>();
-         for (int i = 0; i < frequencies.length; i++) {
-             if (frequencies[i] > 0) map.put((char) i, frequencies[i]);
-         }
-         HashMap<Character, String> code = new HashMap<Character, String>();
-         
-         Entry<Character, Integer> left;
-         Entry<Character, Integer> right;
-         while (tree.size() > 1) {
-             left = tree.pollFirstEntry();
-             right = tree.pollFirstEntry();
-             code.put(left.getKey(), left.getValue() + "0");
-             code.put(right.getKey(), right.getValue() + "1");
-             tree.put('*', left.getValue() + right.getValue());
-         }
-         
-         
-         
-        
-         
-         
+     static String encode(HashMap<String, String> codeMap, String text) {
+    	 String res = "";
+    	 for (int i = 0; i < text.length(); i++)
+    		 res += codeMap.get(text.substring(i, i+1));
+    	 res += "1";
+    	 for (int i = 8 - res.length() % 8; i > 0; i--)
+    		 res += "0";
+    	 return res;
      }
+     
+     static String decode(HashMap<String, String> codeMap, String encoded) {
+    	 return null;
+     }
+     
+     
      
     
 
