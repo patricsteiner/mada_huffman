@@ -72,9 +72,10 @@ public class HuffmanApp extends Application {
         });
         men_openencoded.setOnAction(e -> { 
             try {
-				String content = IOUtil.readAsciiFile(fil_encoded.showOpenDialog(primaryStage).getPath());
+            	byte[] bytes = IOUtil.readBytesFromFile(fil_encoded.showOpenDialog(primaryStage).getPath());
+				String content = Huffman.byteArrayToBinaryString(bytes);
 				tex_encoded.setText(content);
-				content = new BigInteger(IOUtil.readBytesFromFile(fil_codetable.showOpenDialog(primaryStage).getPath())).toString();
+				content = IOUtil.readAsciiFile(fil_codetable.showOpenDialog(primaryStage).getPath());
 				tex_codetable.setText(content);
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
@@ -83,7 +84,7 @@ public class HuffmanApp extends Application {
         men_exportencoded.setOnAction(e -> {
             try {
 				String binaryString = tex_encoded.getText();
-				byte[] bytes = new BigInteger(binaryString, 2).toByteArray();
+				byte[] bytes = Huffman.binaryStringToByteArray(binaryString);
 				IOUtil.writeBytesToFile(bytes, fil_export.showSaveDialog(primaryStage).getPath());
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();

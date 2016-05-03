@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+//TODO: with only 1 char it doesnt work
 public class HuffmanTree {
     
     private Node root;
