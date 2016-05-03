@@ -1,6 +1,5 @@
 package mada_huffman;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -63,14 +62,6 @@ public class HuffmanTree {
 	public Set<Node> getLeaves() {
 		return nodes.stream().filter(n -> n.child1 == null && n.child2 == null).collect(Collectors.toSet());
 	}
-	
-	public HashMap<String, String> createCodeMap() {
-         HashMap<String, String> codeMap = new HashMap<String, String>();
-         for (Node leaf : getLeaves()) {
-        	 codeMap.put(leaf.symbol, leaf.getCode());
-         }
-         return codeMap;
-     }
 	
     static class Node {
     	

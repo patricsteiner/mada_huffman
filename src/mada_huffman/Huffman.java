@@ -1,7 +1,5 @@
 package mada_huffman;
 
-import java.util.HashMap;
-
 public class Huffman {
 
      static int[] getCharacterFrequency(String asciistring) {
@@ -12,17 +10,17 @@ public class Huffman {
          return frequencies;
      }
      
-     static String encode(HashMap<String, String> codeMap, String text) {
+     static String encode(CodeTable codeTable, String text) {
     	 String res = "";
     	 for (int i = 0; i < text.length(); i++)
-    		 res += codeMap.get(text.substring(i, i+1));
+    		 res += codeTable.get(text.substring(i, i+1));
     	 res += "1";
     	 for (int i = 8 - res.length() % 8; i > 0; i--)
     		 res += "0";
     	 return res;
      }
      
-     static String decode(HashMap<String, String> codeMap, String encoded) {
+     static String decode(CodeTable codeTable, String encoded) {
     	 return null;
      }
      
