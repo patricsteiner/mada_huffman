@@ -1,5 +1,7 @@
 package mada_huffman;
 
+import java.math.BigInteger;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -50,13 +52,14 @@ public class HuffmanApp extends Application {
         FileChooser fil_encoded = new FileChooser();
         fil_encoded.setInitialFileName(FILE_ENCODED);
         fil_encoded.setTitle("Choose encoded file");
-        fil_encoded.getExtensionFilters().add(new ExtensionFilter("(*.dat, *.txt)", "*.dat, *.txt"));
+        fil_encoded.getExtensionFilters().add(new ExtensionFilter("BINARY files (*.dat)", "*.dat"));
         FileChooser fil_codetable = new FileChooser();
         fil_codetable.setInitialFileName(FILE_CODETABLE);
         fil_codetable.setTitle("Choose codetable file for previously selected encoded file");
         fil_codetable.getExtensionFilters().add(new ExtensionFilter("TEXT files (*.txt)", "*.txt"));
         FileChooser fil_export = new FileChooser();
         fil_export.setInitialFileName(FILE_ENCODED);
+        fil_export.getExtensionFilters().add(new ExtensionFilter("BINARY files (*.dat)", "*.dat"));
         
         //Menu Events
         men_openraw.setOnAction(e -> {
@@ -71,7 +74,7 @@ public class HuffmanApp extends Application {
             try {
 				String content = IOUtil.readAsciiFile(fil_encoded.showOpenDialog(primaryStage).getPath());
 				tex_encoded.setText(content);
-				content = new String(IOUtil.readBytesFromFile(fil_codetable.showOpenDialog(primaryStage).getPath()));
+				content = new BigInteger(IOUtil.readBytesFromFile(fil_codetable.showOpenDialog(primaryStage).getPath())).toString();
 				tex_codetable.setText(content);
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
@@ -79,8 +82,9 @@ public class HuffmanApp extends Application {
         });
         men_exportencoded.setOnAction(e -> {
             try {
-				String content = tex_encoded.getText();
-				IOUtil.writeBytesToFile(content.getBytes(), fil_export.showSaveDialog(primaryStage).getPath());
+				String binaryString = tex_encoded.getText();
+				byte[] bytes = new BigInteger(binaryString, 2).toByteArray();
+				IOUtil.writeBytesToFile(bytes, fil_export.showSaveDialog(primaryStage).getPath());
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
 			}
@@ -98,9 +102,11 @@ public class HuffmanApp extends Application {
         but_decode.setMinWidth(100);
         but_encode.setMinWidth(100);
         
-        
         //Button Events
-        //TODO
+        but_encode.setOnAction(e -> {
+        	HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(tex_raw.getText()));
+        	tex_encoded.setText(Huffman.encode(new CodeTable(tree), tex_raw.getText()));
+        });
         
         //Main pane, Layout
         BorderPane pane = new BorderPane();
