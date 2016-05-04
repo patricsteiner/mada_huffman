@@ -18,11 +18,13 @@ public class Huffman {
      }
      
      static String decode(CodeTable codeTable, String encoded) {
-    	 return null;
+    	 String res = "";
+    	 int start = 0, end = 0;
+    	 while (end < encoded.length()) {
+        	 while (codeTable.getSymbolByCode(encoded.substring(start, end)) == null) end++;
+        	 res += codeTable.getSymbolByCode(encoded.substring(start, end));
+        	 start = end;
+    	 }
+    	 return res;
      }
-     
-     
-     
-    
-
 }

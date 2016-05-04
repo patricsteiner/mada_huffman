@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
-//TODO: with only 1 char it doesnt work
+//must have at least 2 symbols
 public class HuffmanTree {
     
     private Node root;
@@ -33,16 +33,19 @@ public class HuffmanTree {
             	parent.child1 = new Node(parent, elem1.symbol);
             	nodes.add(parent.child1);
             }
-            else
-            	parent.child1 = (getNode(elem1.symbol).parent = parent);
+            else {
+                parent.child1 = getNode(elem1.symbol);
+                parent.child1.parent = parent;
+            }
             
             if (!nodeExists(elem2.symbol)) {
             	parent.child2 = new Node(parent, elem2.symbol);
             	nodes.add(parent.child2);
             }
-            else
-            	parent.child2 = (getNode(elem2.symbol).parent = parent);         	
-
+            else {
+                parent.child2 = getNode(elem2.symbol);
+                parent.child2.parent = parent;	
+            }
             nodes.add(parent);
             queue.add(new Pair(parent.symbol, elem1.count + elem2.count));
         }

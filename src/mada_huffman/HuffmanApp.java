@@ -1,7 +1,5 @@
 package mada_huffman;
 
-import java.math.BigInteger;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -36,33 +34,30 @@ public class HuffmanApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {      
         //Menu
-        Menu men_open = new Menu("Open");
+        Menu men_import = new Menu("Import");
         Menu men_export = new Menu("Export");
-        MenuItem men_openraw = new MenuItem("Open ASCII file");
-        MenuItem men_openencoded = new MenuItem("Open encoded file");
-        MenuItem men_exportencoded = new MenuItem("Export encoded String");
-        men_open.getItems().addAll(men_openraw, men_openencoded);
-        men_export.getItems().addAll(men_exportencoded);
+        MenuItem men_importraw = new MenuItem("Import ASCII file");
+        MenuItem men_importencoded = new MenuItem("Import encoded file");
+        MenuItem men_importcodetable = new MenuItem("Import code table");
+        MenuItem men_exportraw = new MenuItem("Export raw text file");
+        MenuItem men_exportencoded = new MenuItem("Export encoded file");
+        MenuItem men_exportcodetable = new MenuItem("Export code table");
+        men_import.getItems().addAll(men_importraw, men_importencoded, men_importcodetable);
+        men_export.getItems().addAll(men_exportraw, men_exportencoded, men_exportcodetable);
         
         //File Choosers
         FileChooser fil_raw = new FileChooser();
         fil_raw.setInitialFileName(FILE_RAWTEXT);
-        fil_raw.setTitle("Choose Raw ASCII text file");
         fil_raw.getExtensionFilters().add(new ExtensionFilter("TEXT files (*.txt)", "*.txt"));
         FileChooser fil_encoded = new FileChooser();
         fil_encoded.setInitialFileName(FILE_ENCODED);
-        fil_encoded.setTitle("Choose encoded file");
         fil_encoded.getExtensionFilters().add(new ExtensionFilter("BINARY files (*.dat)", "*.dat"));
         FileChooser fil_codetable = new FileChooser();
         fil_codetable.setInitialFileName(FILE_CODETABLE);
-        fil_codetable.setTitle("Choose codetable file for previously selected encoded file");
         fil_codetable.getExtensionFilters().add(new ExtensionFilter("TEXT files (*.txt)", "*.txt"));
-        FileChooser fil_export = new FileChooser();
-        fil_export.setInitialFileName(FILE_ENCODED);
-        fil_export.getExtensionFilters().add(new ExtensionFilter("BINARY files (*.dat)", "*.dat"));
         
         //Menu Events
-        men_openraw.setOnAction(e -> {
+        men_importraw.setOnAction(e -> {
         	try {
 				String content = IOUtil.readAsciiFile(fil_raw.showOpenDialog(primaryStage).getPath());
 				tex_raw.setText(content);
@@ -70,22 +65,44 @@ public class HuffmanApp extends Application {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
 			}
         });
-        men_openencoded.setOnAction(e -> { 
+        men_importencoded.setOnAction(e -> { 
             try {
             	byte[] bytes = IOUtil.readBytesFromFile(fil_encoded.showOpenDialog(primaryStage).getPath());
 				String content = IOUtil.byteArrayToBinaryString(bytes);
 				tex_encoded.setText(content);
-				content = IOUtil.readAsciiFile(fil_codetable.showOpenDialog(primaryStage).getPath());
-				tex_codetable.setText(content);
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
 			}
         });
+        men_importcodetable.setOnAction(e -> { 
+            try {
+                String content = IOUtil.readAsciiFile(fil_codetable.showOpenDialog(primaryStage).getPath());
+                tex_codetable.setText(content);
+            } catch (Exception e1) {
+                new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
+            }
+        });
+        men_exportraw.setOnAction(e -> {
+            try {
+                String binaryString = tex_raw.getText();
+                IOUtil.writeToFile(binaryString, fil_raw.showSaveDialog(primaryStage).getPath());       
+            } catch (Exception e1) {
+                new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
+            }
+        });
         men_exportencoded.setOnAction(e -> {
             try {
-				String binaryString = tex_encoded.getText();
-				byte[] bytes = IOUtil.binaryStringToByteArray(binaryString);
-				IOUtil.writeBytesToFile(bytes, fil_export.showSaveDialog(primaryStage).getPath());
+                String binaryString = tex_encoded.getText();
+                byte[] bytes = IOUtil.binaryStringToByteArray(binaryString);
+                IOUtil.writeBytesToFile(bytes, fil_encoded.showSaveDialog(primaryStage).getPath());
+            } catch (Exception e1) {
+                new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
+            }
+        });
+        men_exportcodetable.setOnAction(e -> {
+            try {
+				String codeTable = tex_codetable.getText();
+				IOUtil.writeToFile(codeTable, fil_codetable.showSaveDialog(primaryStage).getPath());
 			} catch (Exception e1) {
 				new Alert(AlertType.ERROR, e1.getMessage()).showAndWait();
 			}
@@ -106,13 +123,19 @@ public class HuffmanApp extends Application {
         //Button Events
         but_encode.setOnAction(e -> {
         	HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(tex_raw.getText()));
-        	tex_encoded.setText(Huffman.encode(new CodeTable(tree), tex_raw.getText()));
+        	CodeTable codeTable = new CodeTable(tree);
+        	tex_encoded.setText(Huffman.encode(codeTable, tex_raw.getText()));
+        	tex_codetable.setText(codeTable.toString());
+        });
+        but_decode.setOnAction(e -> {
+            CodeTable codeTable = new CodeTable(tex_codetable.getText());
+            tex_raw.setText(Huffman.decode(codeTable, tex_encoded.getText()));
         });
         
         //Main pane, Layout
         BorderPane pane = new BorderPane();
         pane.setPrefWidth(800);
-        pane.setTop(new MenuBar(men_open,men_export));
+        pane.setTop(new MenuBar(men_import, men_export));
         pane.setCenter(new HBox(tex_raw, new VBox(but_encode, but_decode), tex_encoded));
         pane.setBottom(new HBox(tex_frequency, tex_codetable));
         tex_raw.prefWidthProperty().bind(pane.widthProperty().divide(2));
