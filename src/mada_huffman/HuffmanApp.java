@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -113,6 +114,13 @@ public class HuffmanApp extends Application {
         tex_encoded = new TextArea();
         tex_codetable = new TextArea();
         tex_frequency = new TextArea();
+        		
+        //Labels
+        Label lab_raw = new Label("ASCII text");
+        Label lab_encoded = new Label("Huffman encoded");
+        Label lab_codetable = new Label("Code table");
+        Label lab_frequency = new Label("Character frequencies");
+        
         
         //Buttons
         Button but_encode = new Button(" Encode > ");
@@ -122,8 +130,10 @@ public class HuffmanApp extends Application {
         
         //Button Events
         but_encode.setOnAction(e -> {
-        	HuffmanTree tree = new HuffmanTree(Huffman.getCharacterFrequency(tex_raw.getText()));
+        	int[] frequencies = Huffman.getCharacterFrequency(tex_raw.getText());
+        	HuffmanTree tree = new HuffmanTree(frequencies);
         	CodeTable codeTable = new CodeTable(tree);
+        	tex_frequency.setText(Huffman.frequenciesToString(frequencies));
         	tex_encoded.setText(Huffman.encode(codeTable, tex_raw.getText()));
         	tex_codetable.setText(codeTable.toString());
         });
@@ -135,12 +145,17 @@ public class HuffmanApp extends Application {
         //Main pane, Layout
         BorderPane pane = new BorderPane();
         pane.setPrefWidth(800);
+        pane.setPrefHeight(600);
+        primaryStage.setTitle("mada Huffman");
         pane.setTop(new MenuBar(men_import, men_export));
-        pane.setCenter(new HBox(tex_raw, new VBox(but_encode, but_decode), tex_encoded));
-        pane.setBottom(new HBox(tex_frequency, tex_codetable));
-        tex_raw.prefWidthProperty().bind(pane.widthProperty().divide(2));
-        tex_encoded.prefWidthProperty().bind(pane.widthProperty().divide(2));
-        
+        pane.setCenter(new HBox(new VBox(lab_raw, tex_raw), new VBox(but_encode, but_decode), new VBox(lab_encoded, tex_encoded)));
+        pane.setBottom(new HBox(new VBox(lab_frequency, tex_frequency), new VBox(lab_codetable, tex_codetable)));
+        for (TextArea tex : new TextArea[] { tex_raw, tex_encoded,tex_frequency,tex_codetable} ) {
+        	tex.setStyle("-fx-font-family: monospace;");
+        	tex.prefWidthProperty().bind(pane.widthProperty().divide(2));
+        	tex.prefHeightProperty().bind(pane.heightProperty().divide(2));
+        	tex.setWrapText(true);
+        }
         primaryStage.setScene(new Scene(pane));
         primaryStage.show();
     }

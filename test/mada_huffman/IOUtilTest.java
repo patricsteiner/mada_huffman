@@ -4,6 +4,9 @@ import static mada_huffman.IOUtil.*;
 
 import org.junit.Test;
 
+/**
+ * Assertions must be enabled! (vm argument "-ea")
+ */
 public class IOUtilTest {
 
 	@Test

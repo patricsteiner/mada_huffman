@@ -36,7 +36,7 @@ public class IOUtil {
         assert binaryString.matches("^[01]*$");
         binaryString += "1";
         //make sure string length is a multiple of 8 by appending 10* at the end
-        //every string must end with 1 and then x*0 (empty string becomes = 10000000)
+        //every string must end with 1 and then x*0 (empty string becomes 10000000)
         if (binaryString.length() % 8 != 0) {
             for (int i = 8 - binaryString.length() % 8; i > 0; i--)
                 binaryString += "0";
