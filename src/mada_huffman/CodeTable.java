@@ -4,16 +4,27 @@ import java.util.HashMap;
 
 import mada_huffman.HuffmanTree.Node;
 
+/**
+ * Stores key-value-pairs of a character and his encoding.
+ */
 public class CodeTable extends HashMap<String, String> {
     
     private static final long serialVersionUID = -1337184040582587871L;
 
+    /**
+     * build CodeTable out of a HuffmanTree
+     * @param huffmanTree
+     */
     public CodeTable(HuffmanTree huffmanTree) {
         for (Node leaf : huffmanTree.getLeaves()) {
            put(leaf.symbol, leaf.getCode());
         }
     }
     
+    /**
+     * build CodeTable out of a String
+     * @param codeTable codeTable as String in format "ASCII-Code von Zeichen1:Code von Zeichen1-ASCII-Code von Zeichen2:Code von Zeichen2-..."
+     */
     public CodeTable(String codeTable) {
         String symbol, code;
         for (String entry : codeTable.split("-")) {
@@ -24,7 +35,12 @@ public class CodeTable extends HashMap<String, String> {
         }
     }
     
-    public String getSymbolByCode(String code) {
+    /**
+     * Finds the symbol that matches the code
+     * @param code
+     * @return symbol
+     */
+    public String getSymbolFromCode(String code) {
         for (Entry<String, String> entry : entrySet()) {
             if (code.equals(entry.getValue())) {
                 return entry.getKey();

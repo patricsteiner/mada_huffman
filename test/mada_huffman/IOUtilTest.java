@@ -5,7 +5,8 @@ import static mada_huffman.IOUtil.*;
 import org.junit.Test;
 
 /**
- * Assertions must be enabled! (vm argument "-ea")
+ * Some Tests for the complicated methods (mainly because TDD)
+ * Make sure to enable Assertions in the JVM! (parameter "-ea" must be set)
  */
 public class IOUtilTest {
 

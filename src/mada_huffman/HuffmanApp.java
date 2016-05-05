@@ -17,8 +17,26 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
+/**
+ * mada Programmieraufgabe Huffman
+ * Klasse 2iCa
+ * FS 2016
+ * 
+ * @author Patric Steiner
+ *
+ * This program can encode/decode a string with the huffman coding scheme.
+ * 
+ * There are functions to import and export
+ *   - Raw ASCII Text (*.txt)
+ *   - Huffman compressed text (*.dat)
+ *   - Huffman code table (*.txt)
+ *   
+ * Please note that error handling is not covered in this program. It only works if every input is correct.
+ * There is a very basic GUI for convenience reasons.
+ */
 public class HuffmanApp extends Application {
     
+	//Default file names
 	static final String FILE_RAWTEXT = "text.txt";
 	static final String FILE_ENCODED = "output.dat";
 	static final String FILE_CODETABLE = "dec_tab.txt";
@@ -116,10 +134,10 @@ public class HuffmanApp extends Application {
         tex_frequency = new TextArea();
         		
         //Labels
-        Label lab_raw = new Label("ASCII text");
-        Label lab_encoded = new Label("Huffman encoded");
-        Label lab_codetable = new Label("Code table");
-        Label lab_frequency = new Label("Character frequencies");
+        Label lab_raw = new Label("ASCII text:");
+        Label lab_encoded = new Label("Huffman encoded:");
+        Label lab_codetable = new Label("Code table:");
+        Label lab_frequency = new Label("Character frequencies:");
         
         
         //Buttons
